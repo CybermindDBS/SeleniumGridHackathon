@@ -1,4 +1,20 @@
 -------------------------------------------------------------------------------
 Test set: cucumber.runners.TestRunner
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 54.27 s -- in cucumber.runners.TestRunner
+Tests run: 3, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 221.3 s <<< FAILURE! -- in cucumber.runners.TestRunner
+Calculate Car Loan Emi.Calculating car loan emi with various inputs -- Time elapsed: 42.31 s <<< FAILURE!
+java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertTrue(Assert.java:53)
+	at cucumber.stepDefinitions.CalculateCarLoanEmiSteps.the_user_navigates_to_home_loan_calculator_page(CalculateCarLoanEmiSteps.java:112)
+	at ✽.the user navigates to home_loan_calculator page(file:///C:/Users/shakt/Documents/Code/SeleniumGridHackathon/src/test/resources/features/car_emi_calculator.feature:29)
+
+Calculate Detailed Home Loan Information Annually.Calculating detailed home loan information with various inputs -- Time elapsed: 21.37 s <<< FAILURE!
+java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertTrue(Assert.java:53)
+	at cucumber.stepDefinitions.CalculateHomeLoanEmiSteps.the_user_navigates_to_loan_calculator_page(CalculateHomeLoanEmiSteps.java:88)
+	at ✽.the user navigates to the loan_calculator page(file:///C:/Users/shakt/Documents/Code/SeleniumGridHackathon/src/test/resources/features/home_loan_calculator.feature:29)
+

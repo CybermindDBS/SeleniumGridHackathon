@@ -42,10 +42,10 @@ public class HomeLoanEmiCalculatorPage {
 	@FindBy(xpath = "//button[@class='navbar-toggler']")
 	private WebElement navBarTogglerElement;
 
-	@FindBy(xpath = "//a[@title='Calculators']")
+	@FindBy(xpath = "//a[contains(@title,'Calculators')]")
 	private WebElement calculatorMenuElement;
 
-	@FindBy(xpath = "//a[@title='Calculators']/following-sibling::ul//*[contains(text(),'Loan Calculator')]")
+	@FindBy(xpath = "//a[contains(@title,'Calculators')]/following-sibling::ul//*[contains(text(),'Loan Calculator')]")
 	private WebElement loanCalculatorMenuItemElement;
 
 	@FindBy(tagName = "html")
