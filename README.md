@@ -1,31 +1,76 @@
-COGNIZANT GENC - SELENIUM HACKATHON
+# Selenium Cucumber Framework
 
-Features:-
-1. Selenium / Selenium Grid
-2. Hybrid Testing Framework (Cucumber with JUnit).
-3. Retesting
-4. Smoke and Regression tests
-5. Log4j logging
-6. Page Object Model
-7. Cucumber reports
+A BDD test framework over Selenium — Cucumber for specs, JUnit as the runner, Page Object Model,
+and the same suites runnable locally or against a Selenium Grid by changing one property.
 
+The suites test the loan calculators on [emicalculator.net](https://emicalculator.net/): computing
+car loan EMI, extracting the year-on-year amortisation table into Excel, and validating the
+calculator UI where sliders and text inputs have to stay in sync.
 
-Requriments:-
-Problem Statement : Find the Interest Amount for current year
+## What is worth a look
 
-1. Buying a  car of 15 Lac
-2. Interest rate of 9.5%
-3. Tenure should be 1 year.
-Display the interest amount & principal amount of first month.
-(Suggested Site: emicalculator.net  / HDFCbank.com etc. however you are free to use any other legitimate site)
-Detailed Description: Hackathon Ideas
+**Automatic retest of failures.** `RetestHook` collects the tag of every failed scenario, then in
+`@AfterAll` re-invokes the Cucumber CLI programmatically for those tags only. Each attempt gets its
+own HTML and JSON report, and each tag has its own retry budget, so a genuinely broken scenario stops
+after three tries instead of blocking the run.
 
-1. Find the EMI for Car with price of 15 Lac, Interest rate of 9.5% & Tenure 1 year; Display the interest amount & principal amount for one month
-2. From Menu, pick Home Loan EMI Calculator, fill relevant details & extract all the data from  year on year table & store in excel;
-3. From Menu, pick Loan Calculator and under EMI calculator, do all UI check for text box & scales; change the Loan tenure for year & month,check the change in scale; Re-use the same validation for Loan Amount Calculator & Loan Tenure Calculator
-(Suggested Site: emicalculator.net  however you are free to use any other legitimate site)
+**Page loads are waited on explicitly.** Drivers are created with `PAGE_LOAD_STRATEGY=none`, so
+Selenium never blocks on a page load. Waiting is handled by `DocumentReadyStateExpectedCondition`,
+which polls `document.readyState` directly. This makes waits explicit at the point they matter, and
+avoids the driver stalling on third-party resources the tests do not care about.
 
+**Element helpers that handle the awkward cases.** `ElementUtil` covers what plain `WebDriverWait`
+does not: scroll a specific element into view inside a scrollable container, click repeatedly until a
+target appears, read an entire HTML table into a `String[][]`, and highlight elements during a run so
+recordings are easier to follow.
 
-Selenium Grid Configuration:-
-1. Set 'selenium launch mode' property to 'remote' in /src/test/resources/config.properties.
-2. Start the hub and nodes with selenium-server jar (provided in /selenium-grid-jar/)
+## Layout
+
+```
+src/test/java/
+  cucumber/hooks/          driver lifecycle, log4j, screenshots, retest, cleanup
+  cucumber/runners/        TestRunner (all), SmokeRunner (@smoke), RegressionRunner (@regression)
+  cucumber/stepDefinitions/
+  pageObjects/             one class per calculator page
+  seleniumUtils/           DriverFactory, ElementUtil, custom expected conditions
+  utils/                   Excel, properties, logging
+src/test/resources/features/
+```
+
+## Running it
+
+```
+mvn test -Dtest=TestRunner
+```
+
+`SmokeRunner` and `RegressionRunner` run the `@smoke` and `@regression` subsets. Reports land in
+`target/cucumber-reports`, retries in `target/cucumber-retest-reports`, and the runner opens the HTML
+report in a browser when it finishes.
+
+Screenshots are taken per step and attached to the scenario, so failures show the page as it was.
+Extracted amortisation data is written to `src/test/resources/yearOnYearPaymentDetails.xlsx`.
+
+### Against a Grid
+
+In `src/test/resources/config.properties`:
+
+```properties
+selenium.launch.mode=remote
+selenium-grid.hub.url=http://localhost:4444/wd/hub
+```
+
+Then start a hub and nodes with the server jar in `selenium-grid-jar/`:
+
+```
+java -jar selenium-server-<version>.jar hub
+java -jar selenium-server-<version>.jar node --hub http://localhost:4444
+```
+
+Chrome and Edge are both wired up; scenario outlines take the browser as a parameter.
+
+## Notes
+
+- Written for the Cognizant GENC Selenium hackathon.
+- Locators target a live third-party site, so a redesign there will break selectors.
+- `RetestHook.startRetest` returns rather than continues when one tag exhausts its budget, which
+  abandons any failed scenarios still on the stack.
