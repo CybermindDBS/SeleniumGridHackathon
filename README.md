@@ -72,5 +72,3 @@ Chrome and Edge are both wired up; scenario outlines take the browser as a param
 
 - Written for the Cognizant GENC Selenium hackathon.
 - Locators target a live third-party site, so a redesign there will break selectors.
-- `RetestHook.startRetest` returns rather than continues when one tag exhausts its budget, which
-  abandons any failed scenarios still on the stack.

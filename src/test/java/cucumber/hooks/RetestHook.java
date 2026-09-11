@@ -40,9 +40,10 @@ public class RetestHook {
 				Integer retriesLeft = retryLimit.get(failedScenarioTagName);
 				if (retriesLeft == 0) {
 					Utilities.enablePrintingInConsole();
-					System.out.println("  Retest limit reached, Skipping scenario.");
+					System.out.println("  Retest limit reached for tag " + failedScenarioTagName + ", Skipping scenario.");
 					Utilities.disablePrintingInConsole();
-					return;
+					// Skip only this scenario; other failed scenarios are still on the stack.
+					continue;
 				} else {
 					retryLimit.put(failedScenarioTagName, retriesLeft - 1);
 					retestScenario(failedScenarioTagName);
